@@ -24,20 +24,22 @@ class WhisperService:
             compute_type=COMPUTE_TYPE,
         )
 
-    def transcribe(
-        self,
-        audio_path: str,
-    ) -> TranscriptResponse:
+    def transcribe(self, audio_path: str) -> TranscriptResponse:
 
         try:
 
+            print("Loading audio:", audio_path)
+
             segments, info = self.model.transcribe(audio_path)
 
-            transcript_segments = []
+            print("Whisper started decoding")
 
+            transcript_segments = []
             transcript_text = []
 
             for segment in segments:
+
+                print(segment.text)
 
                 transcript_segments.append(
                     TranscriptSegment(
@@ -49,6 +51,8 @@ class WhisperService:
 
                 transcript_text.append(segment.text.strip())
 
+            print("Finished transcription")
+
             return TranscriptResponse(
                 language=info.language,
                 duration=info.duration,
@@ -57,6 +61,7 @@ class WhisperService:
             )
 
         except Exception as e:
+            print(e)
             raise TranscriptionException(
                 "Failed to transcribe audio."
             ) from e
