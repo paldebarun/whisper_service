@@ -1,21 +1,12 @@
-import os
-import shutil
-import uuid
+from fastapi import APIRouter
 
-from fastapi import (
-    APIRouter,
-    File,
-    HTTPException,
-    UploadFile,
-)
+from models.job_model import WhisperJob
+from services.job_service import JobService
 
-from core.config import UPLOAD_DIR
-from exceptions import TranscriptionException
-from services.whisper_service import WhisperService
 
 router = APIRouter()
 
-whisper_service = WhisperService()
+job_service = JobService()
 
 
 @router.get("/")
@@ -27,43 +18,16 @@ def health():
     }
 
 
-@router.post("/transcribe")
-def transcribe(
-    file: UploadFile = File(...),
+@router.post("/jobs")
+def submit_job(
+    request: WhisperJob,
 ):
 
-    file_extension = os.path.splitext(file.filename)[1]
-
-    file_name = f"{uuid.uuid4()}{file_extension}"
-
-    file_path = os.path.join(
-        UPLOAD_DIR,
-        file_name,
+    job_service.submit(
+        request,
     )
 
-    try:
-
-        os.makedirs(
-            UPLOAD_DIR,
-            exist_ok=True,
-        )
-
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(
-                file.file,
-                buffer,
-            )
-
-        return whisper_service.transcribe(file_path)
-
-    except TranscriptionException as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(e),
-        )
-
-    finally:
-
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    return {
+        "task_id": request.task_id,
+        "status": "QUEUED",
+    }

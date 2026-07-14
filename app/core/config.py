@@ -48,3 +48,41 @@ UPLOAD_DIR = resolve_path(
     "UPLOAD_DIR",
     "uploads",
 )
+
+PORT = int(
+    os.getenv(
+        "PORT",
+        "8000",
+    )
+)
+
+WHISPER_QUEUE = "whisper_queue"
+
+EVENT_STREAM = "workflow_events"
+
+EVENT_CONSUMER_GROUP = "workflow_group"
+
+EVENT_CONSUMER_NAME = "whisper_service"
+
+REDIS_HOST = os.getenv(
+    "REDIS_HOST",
+    "localhost",
+)
+
+REDIS_PORT = int(
+    os.getenv(
+        "REDIS_PORT",
+        "6379",
+    )
+)
+
+REDIS_PASSWORD = os.getenv(
+    "REDIS_PASSWORD",
+)
+
+REDIS_DB = int(
+    os.getenv(
+        "REDIS_DB",
+        "0",
+    )
+)

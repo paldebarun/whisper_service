@@ -10,7 +10,7 @@ class TranscriptSegment(BaseModel):
     text: str
 
 
-class TranscriptResponse(BaseModel):
+class WhisperResponse(BaseModel):
 
     language: str
 

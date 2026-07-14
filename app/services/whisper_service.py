@@ -7,11 +7,17 @@ from core.config import (
     DEVICE,
     WHISPER_MODEL,
 )
+
 from exceptions import TranscriptionException
+
 from models.response_models import (
-    TranscriptResponse,
+    WhisperResponse,
     TranscriptSegment,
 )
+
+from utils.logger import Logger
+
+logger = Logger.get_logger()
 
 
 class WhisperService:
@@ -24,22 +30,34 @@ class WhisperService:
             compute_type=COMPUTE_TYPE,
         )
 
-    def transcribe(self, audio_path: str) -> TranscriptResponse:
+    def transcribe(
+        self,
+        audio_path: str,
+    ) -> WhisperResponse:
+
+        audio_file = Path(audio_path)
+
+        if not audio_file.exists():
+
+            raise TranscriptionException(
+                f"Audio file not found: {audio_path}"
+            )
 
         try:
 
-            print("Loading audio:", audio_path)
+            logger.info(
+                f"Transcribing audio: {audio_path}"
+            )
 
-            segments, info = self.model.transcribe(audio_path)
-
-            print("Whisper started decoding")
+            segments, info = self.model.transcribe(
+                str(audio_file),
+            )
 
             transcript_segments = []
+
             transcript_text = []
 
             for segment in segments:
-
-                print(segment.text)
 
                 transcript_segments.append(
                     TranscriptSegment(
@@ -49,11 +67,15 @@ class WhisperService:
                     )
                 )
 
-                transcript_text.append(segment.text.strip())
+                transcript_text.append(
+                    segment.text.strip()
+                )
 
-            print("Finished transcription")
+            logger.info(
+                "Transcription completed successfully."
+            )
 
-            return TranscriptResponse(
+            return WhisperResponse(
                 language=info.language,
                 duration=info.duration,
                 text=" ".join(transcript_text),
@@ -61,7 +83,11 @@ class WhisperService:
             )
 
         except Exception as e:
-            print(e)
+
+            logger.error(
+                f"Transcription failed: {e}"
+            )
+
             raise TranscriptionException(
                 "Failed to transcribe audio."
             ) from e
