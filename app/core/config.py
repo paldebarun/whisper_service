@@ -44,10 +44,7 @@ COMPUTE_TYPE = os.getenv(
     "int8",
 )
 
-UPLOAD_DIR = resolve_path(
-    "UPLOAD_DIR",
-    "uploads",
-)
+
 
 PORT = int(
     os.getenv(

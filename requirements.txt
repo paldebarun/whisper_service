@@ -3,12 +3,12 @@ uvicorn[standard]
 
 faster-whisper
 
-python-multipart
-
 python-dotenv
 
 pydantic
 
 orjson
 
-httpx
+redis
+
+supervisor
