@@ -1,8 +1,8 @@
-from messaging.redis_stream import RedisStream
+from app.messaging.redis_stream import RedisStream
 
-from core.config import EVENT_STREAM
+from app.core.config import EVENT_STREAM
 
-from models.event_model import (
+from app.models.event_model import (
     WhisperCompletedEvent,
     WhisperFailedEvent,
 )

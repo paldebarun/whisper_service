@@ -1,8 +1,8 @@
-from messaging.redis_queue import RedisQueue
+from app.messaging.redis_queue import RedisQueue
 
-from core.config import WHISPER_QUEUE
+from app.core.config import WHISPER_QUEUE
 
-from models.job_model import WhisperJob
+from app.models.job_model import WhisperJob
 
 
 class JobService:

@@ -2,20 +2,20 @@ from pathlib import Path
 
 from faster_whisper import WhisperModel
 
-from core.config import (
+from app.core.config import (
     COMPUTE_TYPE,
     DEVICE,
     WHISPER_MODEL,
 )
 
-from exceptions import TranscriptionException
+from app.exceptions import TranscriptionException
 
-from models.response_models import (
+from app.models.response_models import (
     WhisperResponse,
     TranscriptSegment,
 )
 
-from utils.logger import Logger
+from app.utils.logger import Logger
 
 logger = Logger.get_logger()
 

@@ -1,16 +1,19 @@
-from models.job_model import WhisperJob
+import redis
 
-from services.whisper_service import WhisperService
-from services.event_service import EventService
-from models.event_model import WhisperCompletedEvent
+from app.models.job_model import WhisperJob
 
-from messaging.redis_queue import RedisQueue
+from app.services.whisper_service import WhisperService
+from app.services.event_service import EventService
+from app.models.event_model import WhisperCompletedEvent
 
-from core.config import WHISPER_QUEUE
+from app.messaging.redis_queue import RedisQueue
 
-from utils.logger import Logger
+from app.core.config import WHISPER_QUEUE
+
+from app.utils.logger import Logger
 
 logger = Logger.get_logger()
+
 
 class WhisperWorker:
 
@@ -28,9 +31,12 @@ class WhisperWorker:
 
         while True:
 
-            job = self.queue.pop(
-                WHISPER_QUEUE,
-            )
+            try:
+                job = self.queue.pop(
+                    WHISPER_QUEUE,
+                )
+            except redis.exceptions.TimeoutError:
+                continue
 
             if job is None:
 
@@ -55,7 +61,6 @@ class WhisperWorker:
                 logger.error(
                     f"Task {task_id} failed: {e}"
                 )
-                
 
     def process_job(
         self,

@@ -1,6 +1,6 @@
 import sys
 
-from workers.whisper_worker import WhisperWorker
+from app.workers.whisper_worker import WhisperWorker
 
 
 WORKERS = {

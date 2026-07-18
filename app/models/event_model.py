@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
-from models.response_models import WhisperResponse
+from app.models.response_models import WhisperResponse
 
 
 class WhisperCompletedEvent(BaseModel):

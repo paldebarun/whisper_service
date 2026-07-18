@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from models.job_model import WhisperJob
-from services.job_service import JobService
+from app.models.job_model import WhisperJob
+from app.services.job_service import JobService
 
 
 router = APIRouter()
