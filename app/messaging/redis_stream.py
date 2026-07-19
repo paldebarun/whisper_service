@@ -1,13 +1,13 @@
+import json
 import redis
 from app.clients.redis_client import RedisClient
 from app.utils.logger import Logger
-logger=Logger.get_logger()
+logger = Logger.get_logger()
 
 
 class RedisStream:
 
     def __init__(self):
-
         self.client = RedisClient.get_client()
 
     def publish(
@@ -15,10 +15,23 @@ class RedisStream:
         stream_name: str,
         event: dict,
     ):
-        logger.info(f"Publishing event : {event} to {stream_name} stream")
+        serialized_event = {}
+
+        for key, value in event.items():
+            if isinstance(value, (dict, list)):
+                serialized_event[key] = json.dumps(value)
+            elif value is None:
+                serialized_event[key] = ""
+            else:
+                serialized_event[key] = str(value)
+
+        logger.info(
+            f"Publishing event : {serialized_event} to {stream_name} stream"
+        )
+
         return self.client.xadd(
             stream_name,
-            event,
+            serialized_event,
         )
 
     def create_consumer_group(
@@ -26,7 +39,6 @@ class RedisStream:
         stream_name: str,
         group_name: str,
     ):
-
         try:
             logger.info(f"creating consumer with group name :{group_name} and stream name : {stream_name}")
             self.client.xgroup_create(
@@ -36,8 +48,6 @@ class RedisStream:
                 mkstream=True,
             )
             logger.info(f"create consumer with group name :{group_name} and stream name : {stream_name}")
-            
-           
         except redis.exceptions.ResponseError as e:
             logger.error(f"exception while creating consumer with group name :{group_name} and stream name : {stream_name} with this error : {e}")
             if "BUSYGROUP" not in str(e):
